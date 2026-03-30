@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import { useFilesStore } from '@/stores/files';
+import { useUpload } from '@/hooks/useUpload';
 import { FolderTree } from '@/components/files/FolderTree';
 import { Breadcrumb } from '@/components/files/Breadcrumb';
 import { FileGrid } from '@/components/files/FileGrid';
@@ -40,6 +41,7 @@ export default function FilesPage() {
   } = useFilesStore();
 
   const isMobile = useIsMobile();
+  const { uploadFiles } = useUpload();
   const [showPreview, setShowPreview] = useState(false);
   const [contextMenu, setContextMenu] = useState<ContextMenuState | null>(null);
   const [isDragOver, setIsDragOver] = useState(false);
@@ -104,8 +106,10 @@ export default function FilesPage() {
     e.preventDefault();
     dragCounter.current = 0;
     setIsDragOver(false);
-    // TODO: Handle file upload from dropped files
-    // const files = Array.from(e.dataTransfer.files);
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+      uploadFiles(files);
+    }
   };
 
   // Context menu actions

@@ -9,6 +9,7 @@ import { MiniPlayer } from '@/components/music/MiniPlayer';
 import { NowPlaying } from '@/components/music/NowPlaying';
 import { usePlayerStore } from '@/stores/player';
 import { useIsMobile } from '@/hooks/useIsMobile';
+import { useUpload } from '@/hooks/useUpload';
 
 interface AppShellProps {
   children: React.ReactNode;
@@ -19,6 +20,14 @@ export function AppShell({ children }: AppShellProps) {
   const [showNowPlaying, setShowNowPlaying] = useState(false);
   const currentTrack = usePlayerStore((s) => s.currentTrack);
   const isMobile = useIsMobile();
+  const { uploadFiles } = useUpload();
+
+  const handleUpload = useCallback(
+    (files: FileList) => {
+      uploadFiles(files);
+    },
+    [uploadFiles]
+  );
 
   const toggleSidebar = useCallback(() => {
     setSidebarCollapsed((prev) => !prev);
@@ -56,7 +65,7 @@ export function AppShell({ children }: AppShellProps) {
       </div>
 
       {/* Upload FAB — always visible */}
-      <UploadFAB />
+      <UploadFAB onUpload={handleUpload} />
 
       {/* Full NowPlaying overlay */}
       {showNowPlaying && currentTrack && (
