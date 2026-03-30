@@ -31,9 +31,10 @@ function getFileIcon(mime: string) {
 
 interface FileGridProps {
   onContextMenu?: (e: React.MouseEvent, item: CNFile | CNFolder, type: 'file' | 'folder') => void;
+  onOpenFile?: (file: CNFile) => void;
 }
 
-export function FileGrid({ onContextMenu }: FileGridProps) {
+export function FileGrid({ onContextMenu, onOpenFile }: FileGridProps) {
   const { files, folders, selectedIds, toggleSelection, navigateTo, isLoading, sortBy, sortOrder } = useFilesStore();
   const isMobile = useIsMobile();
 
@@ -139,10 +140,14 @@ export function FileGrid({ onContextMenu }: FileGridProps) {
         return (
           <div
             key={file.id}
-            onClick={() => toggleSelection(file.id)}
-            onDoubleClick={() => {
-              /* TODO: open/download */
+            onClick={() => {
+              if (isMobile) {
+                onOpenFile?.(file);
+              } else {
+                toggleSelection(file.id);
+              }
             }}
+            onDoubleClick={() => onOpenFile?.(file)}
             onContextMenu={(e) => onContextMenu?.(e, file, 'file')}
             className="cn-panel"
             style={{

@@ -19,6 +19,7 @@ import { FileGrid } from '@/components/files/FileGrid';
 import { FileList } from '@/components/files/FileList';
 import { FilePreview } from '@/components/files/FilePreview';
 import { ContextMenu } from '@/components/files/ContextMenu';
+import { FileViewer } from '@/components/files/FileViewer';
 import * as fileOps from '@/lib/db/files';
 import type { CNFile, CNFolder } from '@/types';
 
@@ -43,6 +44,7 @@ export default function FilesPage() {
   const isMobile = useIsMobile();
   const { uploadFiles } = useUpload();
   const [showPreview, setShowPreview] = useState(false);
+  const [viewingFile, setViewingFile] = useState<CNFile | null>(null);
   const [contextMenu, setContextMenu] = useState<ContextMenuState | null>(null);
   const [isDragOver, setIsDragOver] = useState(false);
   const [searchInput, setSearchInput] = useState('');
@@ -110,11 +112,18 @@ export default function FilesPage() {
     }
   };
 
+  // Open file for viewing
+  const handleOpenFile = useCallback((file: CNFile) => {
+    setViewingFile(file);
+  }, []);
+
   // Context menu actions
   const handleOpen = () => {
     if (!contextMenu) return;
     if (contextMenu.type === 'folder') {
       navigateTo((contextMenu.item as CNFolder).path);
+    } else {
+      setViewingFile(contextMenu.item as CNFile);
     }
   };
 
@@ -300,9 +309,9 @@ export default function FilesPage() {
             </div>
           ) : null}
           {viewMode === 'grid' ? (
-            <FileGrid onContextMenu={handleContextMenu} />
+            <FileGrid onContextMenu={handleContextMenu} onOpenFile={handleOpenFile} />
           ) : (
-            <FileList onContextMenu={handleContextMenu} />
+            <FileList onContextMenu={handleContextMenu} onOpenFile={handleOpenFile} />
           )}
         </div>
       </div>
@@ -349,6 +358,11 @@ export default function FilesPage() {
         >
           <FolderPlus size={22} />
         </button>
+      )}
+
+      {/* File Viewer */}
+      {viewingFile && (
+        <FileViewer file={viewingFile} onClose={() => setViewingFile(null)} />
       )}
 
       {/* Drag & drop overlay */}

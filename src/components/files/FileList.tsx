@@ -33,9 +33,10 @@ type SortBy = 'name' | 'size' | 'createdAt' | 'updatedAt' | 'mime';
 
 interface FileListProps {
   onContextMenu?: (e: React.MouseEvent, item: CNFile | CNFolder, type: 'file' | 'folder') => void;
+  onOpenFile?: (file: CNFile) => void;
 }
 
-export function FileList({ onContextMenu }: FileListProps) {
+export function FileList({ onContextMenu, onOpenFile }: FileListProps) {
   const { files, folders, selectedIds, toggleSelection, navigateTo, isLoading, sortBy, sortOrder, setSorting } =
     useFilesStore();
 
@@ -199,9 +200,7 @@ export function FileList({ onContextMenu }: FileListProps) {
               <tr
                 key={file.id}
                 onClick={() => toggleSelection(file.id)}
-                onDoubleClick={() => {
-                  /* TODO: open/download */
-                }}
+                onDoubleClick={() => onOpenFile?.(file)}
                 onContextMenu={(e) => onContextMenu?.(e, file, 'file')}
                 style={{
                   backgroundColor: isSelected ? 'var(--cn-accent-glow)' : 'transparent',

@@ -4,6 +4,7 @@ import { useCallback, useState } from 'react';
 import { useFilesStore } from '@/stores/files';
 import { useTransfersStore } from '@/stores/transfers';
 import * as fileOps from '@/lib/db/files';
+import { db } from '@/lib/db/schema';
 import { getMimeType } from '@/lib/utils/mime';
 import { logger } from '@/lib/utils/logger';
 
@@ -61,7 +62,18 @@ export function useUpload() {
             tags: [],
           });
 
-          // 2. Queue transfer with the CORRECT fileId
+          // 2. Store file blob in cache so it can be previewed/opened
+          await db.cache.put({
+            key: createdFile.id,
+            blob: new Blob([await file.arrayBuffer()], { type: mime }),
+            rangeStart: 0,
+            rangeEnd: file.size,
+            createdAt: new Date(),
+            accessedAt: new Date(),
+            size: file.size,
+          });
+
+          // 3. Queue transfer with the CORRECT fileId
           await addTransfer({
             type: 'upload',
             fileId: createdFile.id,
