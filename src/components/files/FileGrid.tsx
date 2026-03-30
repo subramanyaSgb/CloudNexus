@@ -11,6 +11,7 @@ import {
   Star,
 } from 'lucide-react';
 import { useFilesStore } from '@/stores/files';
+import { useIsMobile } from '@/hooks/useIsMobile';
 import { getFileCategory } from '@/lib/utils/mime';
 import { formatFileSize, formatRelativeDate } from '@/lib/utils/formatting';
 import { Spinner, EmptyState } from '@/components/ui';
@@ -34,6 +35,7 @@ interface FileGridProps {
 
 export function FileGrid({ onContextMenu }: FileGridProps) {
   const { files, folders, selectedIds, toggleSelection, navigateTo, isLoading, sortBy, sortOrder } = useFilesStore();
+  const isMobile = useIsMobile();
 
   if (isLoading) {
     return (
@@ -69,7 +71,7 @@ export function FileGrid({ onContextMenu }: FileGridProps) {
     <div
       style={{
         display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))',
+        gridTemplateColumns: isMobile ? 'repeat(auto-fill, minmax(140px, 1fr))' : 'repeat(auto-fill, minmax(160px, 1fr))',
         gap: '12px',
         padding: '4px',
       }}

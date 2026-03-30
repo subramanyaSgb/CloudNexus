@@ -8,7 +8,9 @@ import {
   Info,
   Upload,
   X,
+  FolderPlus,
 } from 'lucide-react';
+import { useIsMobile } from '@/hooks/useIsMobile';
 import { useFilesStore } from '@/stores/files';
 import { FolderTree } from '@/components/files/FolderTree';
 import { Breadcrumb } from '@/components/files/Breadcrumb';
@@ -37,6 +39,7 @@ export default function FilesPage() {
     refreshCurrentFolder,
   } = useFilesStore();
 
+  const isMobile = useIsMobile();
   const [showPreview, setShowPreview] = useState(false);
   const [contextMenu, setContextMenu] = useState<ContextMenuState | null>(null);
   const [isDragOver, setIsDragOver] = useState(false);
@@ -141,8 +144,8 @@ export default function FilesPage() {
       onDragOver={handleDragOver}
       onDrop={handleDrop}
     >
-      {/* Left sidebar - Folder tree */}
-      <FolderTree />
+      {/* Left sidebar - Folder tree (hidden on mobile) */}
+      {!isMobile && <FolderTree />}
 
       {/* Main content */}
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', minWidth: 0 }}>
@@ -152,14 +155,14 @@ export default function FilesPage() {
             display: 'flex',
             alignItems: 'center',
             gap: '12px',
-            padding: '8px 16px',
+            padding: isMobile ? '8px 10px' : '8px 16px',
             borderBottom: '1px solid var(--cn-border)',
             backgroundColor: 'var(--cn-bg-secondary)',
             flexWrap: 'wrap',
           }}
         >
           {/* Breadcrumb */}
-          <div style={{ flex: 1, minWidth: '200px' }}>
+          <div style={{ flex: 1, minWidth: isMobile ? '120px' : '200px' }}>
             <Breadcrumb />
           </div>
 
@@ -173,8 +176,9 @@ export default function FilesPage() {
               border: '1px solid var(--cn-border)',
               borderRadius: 'var(--cn-radius-sm)',
               padding: '4px 8px',
-              minWidth: '180px',
-              maxWidth: '280px',
+              minWidth: isMobile ? '0' : '180px',
+              maxWidth: isMobile ? '100%' : '280px',
+              flex: isMobile ? '1 1 100%' : undefined,
             }}
           >
             <Search size={14} style={{ color: 'var(--cn-text-secondary)', flexShrink: 0 }} />
@@ -229,8 +233,8 @@ export default function FilesPage() {
                 display: 'inline-flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                width: '32px',
-                height: '32px',
+                width: isMobile ? '44px' : '32px',
+                height: isMobile ? '44px' : '32px',
                 border: 'none',
                 cursor: 'pointer',
                 backgroundColor: viewMode === 'grid' ? 'var(--cn-accent)' : 'var(--cn-bg-tertiary)',
@@ -247,8 +251,8 @@ export default function FilesPage() {
                 display: 'inline-flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                width: '32px',
-                height: '32px',
+                width: isMobile ? '44px' : '32px',
+                height: isMobile ? '44px' : '32px',
                 border: 'none',
                 borderLeft: '1px solid var(--cn-border)',
                 cursor: 'pointer',
@@ -262,11 +266,11 @@ export default function FilesPage() {
             </button>
           </div>
 
-          {/* Info toggle */}
+          {/* Info toggle — hidden on mobile */}
           <button
             onClick={() => setShowPreview(!showPreview)}
             style={{
-              display: 'inline-flex',
+              display: isMobile ? 'none' : 'inline-flex',
               alignItems: 'center',
               justifyContent: 'center',
               width: '32px',
@@ -301,8 +305,8 @@ export default function FilesPage() {
         </div>
       </div>
 
-      {/* Right sidebar - File preview */}
-      {showPreview && <FilePreview onClose={() => setShowPreview(false)} />}
+      {/* Right sidebar - File preview (hidden on mobile) */}
+      {showPreview && !isMobile && <FilePreview onClose={() => setShowPreview(false)} />}
 
       {/* Context menu */}
       {contextMenu && (
@@ -316,6 +320,33 @@ export default function FilesPage() {
           onStar={handleStar}
           onDelete={handleDelete}
         />
+      )}
+
+      {/* New Folder FAB — mobile only */}
+      {isMobile && (
+        <button
+          style={{
+            position: 'absolute',
+            bottom: '24px',
+            right: '24px',
+            zIndex: 50,
+            width: '52px',
+            height: '52px',
+            borderRadius: '50%',
+            border: 'none',
+            backgroundColor: 'var(--cn-accent)',
+            color: '#FFFFFF',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            boxShadow: 'var(--cn-shadow-lg)',
+            cursor: 'pointer',
+          }}
+          aria-label="New folder"
+          title="New folder"
+        >
+          <FolderPlus size={22} />
+        </button>
       )}
 
       {/* Drag & drop overlay */}

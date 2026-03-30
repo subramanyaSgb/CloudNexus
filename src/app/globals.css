@@ -192,3 +192,79 @@ body {
 .cn-interactive:hover {
   background-color: var(--cn-bg-tertiary);
 }
+
+/* ========================================
+   Mobile Responsive
+   ======================================== */
+
+@media (max-width: 767px) {
+  :root {
+    --cn-sidebar-width: 0px;
+    --cn-topbar-height: 48px;
+    --cn-mini-player-height: 56px;
+  }
+
+  body {
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .cn-safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  /* Larger touch targets on mobile */
+  .cn-interactive {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+/* Hide on mobile */
+@media (max-width: 767px) {
+  .cn-desktop-only {
+    display: none !important;
+  }
+}
+
+/* Hide on desktop */
+@media (min-width: 768px) {
+  .cn-mobile-only {
+    display: none !important;
+  }
+}
+
+/* Touch-friendly on mobile */
+@media (max-width: 767px) {
+  .cn-touch-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+/* Bottom sheet animation */
+@keyframes cn-slide-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.cn-slide-up {
+  animation: cn-slide-up 250ms ease-out forwards;
+}
+
+@keyframes cn-fade-in-overlay {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.cn-fade-in-overlay {
+  animation: cn-fade-in-overlay 200ms ease-out forwards;
+}

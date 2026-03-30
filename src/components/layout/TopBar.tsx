@@ -1,14 +1,16 @@
 'use client';
 
-import { Search, Sun, Moon, Monitor, User, LogOut } from 'lucide-react';
+import { Search, Sun, Moon, Monitor, User, LogOut, Menu } from 'lucide-react';
 import { useTheme } from '@/hooks/useTheme';
 import { useAuthStore } from '@/stores/auth';
+import { useIsMobile } from '@/hooks/useIsMobile';
 import { useState, useCallback } from 'react';
 
 export function TopBar() {
   const { theme, toggle } = useTheme();
   const signOut = useAuthStore((s) => s.signOut);
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const isMobile = useIsMobile();
 
   const ThemeIcon = theme === 'dark' ? Moon : theme === 'light' ? Sun : Monitor;
 
@@ -19,48 +21,74 @@ export function TopBar() {
 
   return (
     <header
-      className="flex items-center justify-between px-4 border-b"
+      className={`flex items-center justify-between border-b ${isMobile ? 'px-3' : 'px-4'}`}
       style={{
         height: 'var(--cn-topbar-height)',
         backgroundColor: 'var(--cn-bg-secondary)',
         borderColor: 'var(--cn-border)',
       }}
     >
-      {/* Search */}
-      <div
-        className="flex items-center gap-2 px-3 py-1.5 rounded-md flex-1 max-w-md"
-        style={{
-          backgroundColor: 'var(--cn-bg-tertiary)',
-          border: '1px solid var(--cn-border)',
-        }}
-      >
-        <Search size={16} style={{ color: 'var(--cn-text-secondary)' }} />
-        <input
-          type="text"
-          placeholder="Search files, photos, music... (Ctrl+K)"
-          className="bg-transparent border-none outline-none text-sm flex-1"
+      {/* Mobile: hamburger + page title */}
+      {isMobile && (
+        <div className="flex items-center gap-2">
+          <button
+            className="cn-interactive cn-focus-ring p-2 rounded-md min-h-[44px] min-w-[44px] flex items-center justify-center"
+            style={{ color: 'var(--cn-text-secondary)' }}
+            aria-label="Menu"
+          >
+            <Menu size={20} />
+          </button>
+          <span className="text-sm font-semibold" style={{ color: 'var(--cn-text-primary)' }}>
+            CloudNexus
+          </span>
+        </div>
+      )}
+
+      {/* Search — full bar on desktop, icon button on mobile */}
+      {isMobile ? (
+        <button
+          className="cn-interactive cn-focus-ring p-2 rounded-md min-h-[44px] min-w-[44px] flex items-center justify-center"
+          style={{ color: 'var(--cn-text-secondary)' }}
+          aria-label="Search"
+        >
+          <Search size={20} />
+        </button>
+      ) : (
+        <div
+          className="flex items-center gap-2 px-3 py-1.5 rounded-md flex-1 max-w-md"
           style={{
-            color: 'var(--cn-text-primary)',
-          }}
-        />
-        <kbd
-          className="hidden sm:inline-block text-xs px-1.5 py-0.5 rounded"
-          style={{
-            backgroundColor: 'var(--cn-bg-secondary)',
-            color: 'var(--cn-text-secondary)',
+            backgroundColor: 'var(--cn-bg-tertiary)',
             border: '1px solid var(--cn-border)',
           }}
         >
-          /
-        </kbd>
-      </div>
+          <Search size={16} style={{ color: 'var(--cn-text-secondary)' }} />
+          <input
+            type="text"
+            placeholder="Search files, photos, music... (Ctrl+K)"
+            className="bg-transparent border-none outline-none text-sm flex-1"
+            style={{
+              color: 'var(--cn-text-primary)',
+            }}
+          />
+          <kbd
+            className="hidden sm:inline-block text-xs px-1.5 py-0.5 rounded"
+            style={{
+              backgroundColor: 'var(--cn-bg-secondary)',
+              color: 'var(--cn-text-secondary)',
+              border: '1px solid var(--cn-border)',
+            }}
+          >
+            /
+          </kbd>
+        </div>
+      )}
 
       {/* Actions */}
       <div className="flex items-center gap-1 ml-4">
         {/* Theme toggle */}
         <button
           onClick={toggle}
-          className="cn-interactive cn-focus-ring p-2 rounded-md"
+          className="cn-interactive cn-focus-ring p-2 rounded-md min-h-[44px] min-w-[44px] flex items-center justify-center"
           style={{ color: 'var(--cn-text-secondary)' }}
           aria-label={`Theme: ${theme}`}
           title={`Theme: ${theme}`}
@@ -72,7 +100,7 @@ export function TopBar() {
         <div className="relative">
           <button
             onClick={() => setShowUserMenu(!showUserMenu)}
-            className="cn-interactive cn-focus-ring p-2 rounded-md"
+            className="cn-interactive cn-focus-ring p-2 rounded-md min-h-[44px] min-w-[44px] flex items-center justify-center"
             style={{ color: 'var(--cn-text-secondary)' }}
             aria-label="User menu"
           >
