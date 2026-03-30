@@ -49,12 +49,10 @@ export default function FilesPage() {
   const dragCounter = useRef(0);
   const initialized = useRef(false);
 
-  // Initialize on mount
+  // Load files every time Files page is visited
   useEffect(() => {
-    if (!initialized.current) {
-      initialized.current = true;
-      navigateTo('/');
-    }
+    navigateTo(initialized.current ? useFilesStore.getState().currentPath : '/');
+    initialized.current = true;
   }, [navigateTo]);
 
   const handleContextMenu = useCallback(
