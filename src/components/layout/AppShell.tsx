@@ -7,6 +7,7 @@ import { BottomNav } from './BottomNav';
 import { UploadFAB } from './UploadFAB';
 import { MiniPlayer } from '@/components/music/MiniPlayer';
 import { NowPlaying } from '@/components/music/NowPlaying';
+import { Toast } from '@/components/ui/Toast';
 import { usePlayerStore } from '@/stores/player';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import { useUpload } from '@/hooks/useUpload';
@@ -20,7 +21,7 @@ export function AppShell({ children }: AppShellProps) {
   const [showNowPlaying, setShowNowPlaying] = useState(false);
   const currentTrack = usePlayerStore((s) => s.currentTrack);
   const isMobile = useIsMobile();
-  const { uploadFiles } = useUpload();
+  const { uploadFiles, uploadState } = useUpload();
 
   const handleUpload = useCallback(
     (files: FileList) => {
@@ -32,6 +33,13 @@ export function AppShell({ children }: AppShellProps) {
   const toggleSidebar = useCallback(() => {
     setSidebarCollapsed((prev) => !prev);
   }, []);
+
+  // Toast message
+  const toastMessage = uploadState.isUploading
+    ? `Uploading ${uploadState.uploadedCount}/${uploadState.totalCount} files...`
+    : uploadState.uploadedCount > 0
+      ? `${uploadState.uploadedCount} file${uploadState.uploadedCount > 1 ? 's' : ''} added`
+      : '';
 
   return (
     <div className="flex h-dvh overflow-hidden" style={{ backgroundColor: 'var(--cn-bg-primary)' }}>
@@ -66,6 +74,13 @@ export function AppShell({ children }: AppShellProps) {
 
       {/* Upload FAB — always visible */}
       <UploadFAB onUpload={handleUpload} />
+
+      {/* Upload Toast */}
+      <Toast
+        message={toastMessage}
+        type={uploadState.isUploading ? 'uploading' : 'success'}
+        visible={!!toastMessage}
+      />
 
       {/* Full NowPlaying overlay */}
       {showNowPlaying && currentTrack && (
