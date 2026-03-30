@@ -1,17 +1,26 @@
 {
-  "name": "cloudnexus-app",
-  "version": "0.1.0",
+  "name": "cloudnexus",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint . --max-warnings 0",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "next": "16.2.1",
     "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "react-dom": "19.2.4",
+    "telegram": "^2.26.22",
+    "dexie": "^4.0.11",
+    "zustand": "^5.0.3",
+    "lucide-react": "^0.468.0",
+    "fflate": "^0.8.2",
+    "music-metadata-browser": "^2.5.10"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
@@ -21,6 +30,11 @@
     "eslint": "^9",
     "eslint-config-next": "16.2.1",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^3.1.1",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@vitejs/plugin-react": "^4.4.1",
+    "jsdom": "^26.1.0"
   }
 }
